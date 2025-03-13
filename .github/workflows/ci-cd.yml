@@ -34,11 +34,15 @@ jobs:
 
       - name: Build and Push Docker image
         working-directory: demo
+        env:
+          DOCKER_USERNAME: ${{ secrets.ALIYUN_REGISTRY_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
         run: |
           # 构建本地镜像
           docker build -t springboot-hello-world:latest .
-          #登录镜像仓库
-          docker login --username=LancerBlackLing crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com
+          
+          # 使用环境变量进行Docker登录
+          echo "$DOCKER_PASSWORD" | docker login ${{ secrets.ALIYUN_REGISTRY_URL }} -u "$DOCKER_USERNAME" --password-stdin
           
           # 打标签
           docker tag springboot-hello-world:latest ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
