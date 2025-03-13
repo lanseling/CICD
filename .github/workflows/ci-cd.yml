@@ -20,34 +20,28 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: cd demo && mvn clean package
+        run: mvn clean package
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
       - name: Log in to ACR
-        env:
-          DOCKER_USERNAME: ${{ secrets.ALIYUN_REGISTRY_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
-          REGISTRY_URL: ${{ secrets.ALIYUN_REGISTRY_URL }}
         run: |
-          echo "$DOCKER_PASSWORD" | docker login "$REGISTRY_URL" -u "$DOCKER_USERNAME" --password-stdin
+          docker login \
+            --username=${{ secrets.ALIYUN_REGISTRY_USERNAME }} \
+            ${{ secrets.ALIYUN_REGISTRY_URL }} \
+            --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
 
       - name: Build and Push Docker image
-        working-directory: demo
-        env:
-          REGISTRY_URL: ${{ secrets.ALIYUN_REGISTRY_URL }}
-          NAMESPACE: ${{ secrets.ALIYUN_NAMESPACE }}
-          REPO_NAME: ${{ secrets.ALIYUN_REPO_NAME }}
         run: |
           # 构建本地镜像
           docker build -t springboot-hello-world:latest .
-          
+    
           # 打标签
-          docker tag springboot-hello-world:latest "$REGISTRY_URL/$NAMESPACE/$REPO_NAME:latest"
-          
+          docker tag springboot-hello-world:latest ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
+    
           # 推送镜像
-          docker push "$REGISTRY_URL/$NAMESPACE/$REPO_NAME:latest"
+          docker push ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
 
   deploy:
     needs: build
@@ -69,10 +63,6 @@ jobs:
           chmod 600 $HOME/.kube/config
 
       - name: Deploy to Kubernetes
-        env:
-          REGISTRY_URL: ${{ secrets.ALIYUN_REGISTRY_URL }}
-          NAMESPACE: ${{ secrets.ALIYUN_NAMESPACE }}
-          REPO_NAME: ${{ secrets.ALIYUN_REPO_NAME }}
         run: |
-          kubectl set image deployment/springboot-hello-world springboot-hello-world="$REGISTRY_URL/$NAMESPACE/$REPO_NAME:latest"
+          kubectl set image deployment/springboot-hello-world springboot-hello-world=${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
 
