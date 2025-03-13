@@ -36,7 +36,7 @@ jobs:
         working-directory: demo
         run: |
           # 构建本地镜像
-          docker build -t springboot-hello-world:latest ..
+          docker build -t springboot-hello-world:latest .
           #登录镜像仓库
           docker login --username=LancerBlackLing crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com
           
