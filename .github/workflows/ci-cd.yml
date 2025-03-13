@@ -37,6 +37,8 @@ jobs:
         run: |
           # 构建本地镜像
           docker build -t springboot-hello-world:latest .
+          #登录镜像仓库
+          docker login --username=LancerBlackLing crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com
           
           # 打标签
           docker tag springboot-hello-world:latest ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
