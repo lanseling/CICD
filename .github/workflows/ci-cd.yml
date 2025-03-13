@@ -33,7 +33,6 @@ jobs:
             --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
 
       - name: Build and Push Docker image
-        working-directory: ./demo
         run: |
           # 构建本地镜像
           docker build -t springboot-hello-world:latest .
