@@ -46,7 +46,7 @@ jobs:
           echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
     
           # 打标签
-          docker tag IMAGE_ID crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
+          docker tag ${IMAGE_ID} crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
     
           # 推送镜像
           docker push crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
