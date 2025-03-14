@@ -27,10 +27,7 @@ jobs:
 
       - name: Log in to ACR
         run: |
-          docker login \
-            --username=${{ secrets.ALIYUN_REGISTRY_USERNAME }} \
-            ${{ secrets.ALIYUN_REGISTRY_URL }} \
-            --password-stdin=${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+          docker login --username=LancerBlackLing crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com
 
       - name: Build and Push Docker image
         run: |
@@ -42,12 +39,17 @@ jobs:
 
           # 构建本地镜像
           docker build -t springboot-hello-world:latest .
+          
+          # 获取镜像ID并存储为环境变量
+          IMAGE_ID=$(docker images -q springboot-hello-world:latest)
+          echo "构建的镜像ID: $IMAGE_ID"
+          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_ENV
     
           # 打标签
-          docker tag springboot-hello-world:latest ${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
+          docker tag IMAGE_ID crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
     
           # 推送镜像
-          docker push ${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
+          docker push crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
 
   deploy:
     needs: build
