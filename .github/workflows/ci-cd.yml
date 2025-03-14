@@ -32,14 +32,19 @@ jobs:
       - name: Build and Push Docker image
         run: |
           cd demo
+          # 设置变量并转换为小写
+          REGISTRY_URL=$(echo "${{ secrets.ALIYUN_REGISTRY_URL }}" | tr '[:upper:]' '[:lower:]')
+          NAMESPACE=$(echo "${{ secrets.ALIYUN_NAMESPACE }}" | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo "${{ secrets.ALIYUN_REPO_NAME }}" | tr '[:upper:]' '[:lower:]')
+
           # 构建本地镜像
           docker build -t springboot-hello-world:latest .
     
           # 打标签
-          docker tag springboot-hello-world:latest ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
+          docker tag springboot-hello-world:latest ${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
     
           # 推送镜像
-          docker push crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
+          docker push ${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
 
   deploy:
     needs: build
