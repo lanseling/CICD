@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment    # 工作负载类型
+metadata:
+  name: springboot-hello-world
+  namespace: default  # 根据需要更改命名空间
+  labels:
+    app: springboot-hello-world
+spec:
+  replicas: 1  # 指定Pod数量
+  selector:
+    matchLabels:
+      app: springboot-hello-world
+  template: # Pod配置
+    metadata:
+      labels: # Pod标签
+        app: springboot-hello-world
+      annotations: # Pod注解
+        description: "This is an application deployment"
+    spec:
+      containers:
+        - name: springboot-hello-world  # 镜像名称
+          image: crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest  # 使用特定版本的 Nginx 镜像
+          ports:
+            - name: springboot-hello-world  # name
+              containerPort: 80  # 容器暴露的端口
+---
+# service
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-hello-world
+  namespace: default  # 根据需要更改命名空间
+  labels:
+    app: springboot-hello-world
+spec:
+  selector:
+    app: springboot-hello-world # 匹配标签，确保服务指向正确的 Pods
+  ports:
+    - port: 80           # Service 在集群内提供的端口
+      targetPort: 8080     # 指向容器内部应用程序监听的端口 (containerPort)
+      protocol: TCP      # 协议，默认是 TCP
+  type: LoadBalancer        # 服务类型，默认是 ClusterIP，内部访问
+---
