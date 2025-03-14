@@ -27,10 +27,7 @@ jobs:
 
       - name: Log in to ACR
         run: |
-          docker login \
-            --username=${{ secrets.ALIYUN_REGISTRY_USERNAME }} \
-            ${{ secrets.ALIYUN_REGISTRY_URL }} \
-            --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+          echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login --username="${{ secrets.ALIYUN_REGISTRY_USERNAME }}" --password-stdin "${{ secrets.ALIYUN_REGISTRY_URL }}"
 
       - name: Build and Push Docker image
         run: |
