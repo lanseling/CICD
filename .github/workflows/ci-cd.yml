@@ -72,5 +72,24 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          kubectl set image deployment/springboot-hello-world springboot-hello-world=${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
+          # 设置更长的超时时间和重试机制
+          kubectl config set-cluster --server=${{ secrets.ALIYUN_CLUSTER_SERVER }} --insecure-skip-tls-verify=true
+          kubectl config set-context --current --namespace=default
+          
+          # 使用重试机制执行部署
+          max_retries=5
+          retry_delay=10
+          
+          for ((i=1; i<=$max_retries; i++)); do
+            if kubectl set image deployment/springboot-hello-world springboot-hello-world=${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest --timeout=60s; then
+              echo "Deployment successful on attempt $i"
+              exit 0
+            else
+              echo "Attempt $i failed. Retrying in $retry_delay seconds..."
+              sleep $retry_delay
+            fi
+          done
+          
+          echo "Failed to deploy after $max_retries attempts"
+          exit 1
 
