@@ -27,7 +27,7 @@ jobs:
 
       - name: Log in to ACR
         run: |
-                   echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login --username=LancerBlackLing --password-stdin crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com
+          echo "${{ secrets.ALIYUN_REGISTRY_PASSWORD }}" | docker login --username=LancerBlackLing --password-stdin crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com
 
       - name: Build and Push Docker image
         run: |
@@ -36,16 +36,10 @@ jobs:
           docker build -t springboot-hello-world:latest .
     
           # 打标签
-          # 将所有变量转换为小写
-          REGISTRY_URL=$(echo "${{ secrets.ALIYUN_REGISTRY_URL }}" | tr '[:upper:]' '[:lower:]')
-          NAMESPACE=$(echo "${{ secrets.ALIYUN_NAMESPACE }}" | tr '[:upper:]' '[:lower:]')
-          REPO_NAME=$(echo "${{ secrets.ALIYUN_REPO_NAME }}" | tr '[:upper:]' '[:lower:]')
-          
-          # 使用转换后的小写变量进行标记和推送
-          docker tag springboot-hello-world:latest ${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
+          docker tag springboot-hello-world:latest ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
     
           # 推送镜像
-          docker push ${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
+          docker push ${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
 
   deploy:
     needs: build
