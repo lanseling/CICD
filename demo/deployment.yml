@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: springboot-hello-world
-        image: registry.cn-hangzhou.aliyuncs.com/my-app/springboot-hello-world:latest
+        image: crpi-kb7j4bn5aam09voc.cn-hangzhou.personal.cr.aliyuncs.com/hello_app/springboot-hello-world:latest
         ports:
         - containerPort: 8080
 ---
