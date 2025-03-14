@@ -72,11 +72,5 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
-          # 将所有变量转换为小写
-          REGISTRY_URL=$(echo "${{ secrets.ALIYUN_REGISTRY_URL }}" | tr '[:upper:]' '[:lower:]')
-          NAMESPACE=$(echo "${{ secrets.ALIYUN_NAMESPACE }}" | tr '[:upper:]' '[:lower:]')
-          REPO_NAME=$(echo "${{ secrets.ALIYUN_REPO_NAME }}" | tr '[:upper:]' '[:lower:]')
-          
-          # 使用转换后的小写变量更新部署
-          kubectl set image deployment/springboot-hello-world springboot-hello-world=${REGISTRY_URL}/${NAMESPACE}/${REPO_NAME}:latest
+          kubectl set image deployment/springboot-hello-world springboot-hello-world=${{ secrets.ALIYUN_REGISTRY_URL }}/${{ secrets.ALIYUN_NAMESPACE }}/${{ secrets.ALIYUN_REPO_NAME }}:latest
 
