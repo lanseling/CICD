@@ -29,8 +29,8 @@ jobs:
         run: |
           docker login \
             --username=${{ secrets.ALIYUN_REGISTRY_USERNAME }} \
-            ${{ secrets.ALIYUN_REGISTRY_URL }} \
-            --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
+            --password=${{ secrets.ALIYUN_REGISTRY_PASSWORD }} \
+            ${{ secrets.ALIYUN_REGISTRY_URL }}
 
       - name: Build and Push Docker image
         run: |
